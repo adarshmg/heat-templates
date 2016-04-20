@@ -1,0 +1,37 @@
+heat_template_version: 2013-05-23
+description: Kafka cluster Hot
+parameters:
+  image:
+    type: string
+    description: Image used for servers
+  key:
+    type: string
+    description: SSH key to connect to the servers
+  flavor:
+    type: string
+    description: flavor used by the web servers
+  network:
+    type: string
+    description: Network used by the server
+  zookeeper_data_dir:
+    type: string
+    description: Zookeeper data dir
+    default: "/var/lib/zookeeper"
+resources:
+  kafka_group:
+    type: OS::Heat:ResourceGroup
+    properties:
+      count: 3
+      resource_def:
+        type:  server_with_cinder_volume.hot.yaml
+        properties:
+          key_name: {get_param: key}
+          image: {get_param: image}
+          flavor: {get_param: flavor}
+          network: {get_param: network}
+          zookeeper_data_dir: {get_param: zookeeper_data_dir}
+          server_index: %index%
+          vol_size: 1
+
+
+outputs:
